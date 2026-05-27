@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Diario de Léah 🌸</title>
+  <meta name="theme-color" content="#f97316" />
+  <link rel="manifest" href="manifest.json" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --coral: #f97316;
+      --coral-light: #fda085;
+      --cream: #fdf6f0;
+      --card: #ffffff;
+      --text: #1a1a2e;
+      --muted: #999;
+      --border: #f0e0d6;
+      --green: #22c55e;
+      --green-bg: #dcfce7;
+      --green-text: #15803d;
+    }
+
+    body {
+      background: var(--cream);
+      font-family: 'DM Sans', sans-serif;
+      max-width: 480px;
+      margin: 0 auto;
+      min-height: 100vh;
+      padding-bottom: 90px;
+    }
+
+    /* HEADER */
+    .header {
+      background: linear-gradient(135deg, #ff9a9e 0%, #fda085 50%, #ffecd2 100%);
+      padding: 28px 20px 20px;
+      text-align: center;
+    }
+    .header-emoji { font-size: 44px; margin-bottom: 6px; display: block; }
+    .header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 26px; font-weight: 900;
+      color: white; letter-spacing: -0.5px;
+      margin-bottom: 4px;
+    }
+    .header p { font-size: 13px; color: rgba(255,255,255,0.9); font-style: italic; }
+    .nuevos-chips { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-top: 12px; }
+    .chip-nuevo {
+      background: rgba(255,255,255,0.3);
+      color: white; font-size: 11px; font-weight: 700;
+      padding: 3px 10px; border-radius: 20px;
+      backdrop-filter: blur(4px);
+    }
+
+    /* TABS */
+    .tabs {
+      display: flex; background: white;
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 10;
+    }
+    .tab {
+      flex: 1; padding: 13px 0; border: none; background: none;
+      font-family: 'Playfair Display', serif;
+      font-size: 14px; cursor: pointer; color: var(--muted);
+      border-bottom: 2px solid transparent; margin-bottom: -1px;
+      transition: all 0.2s;
+    }
+    .tab.active { color: var(--coral); font-weight: 700; border-bottom-color: var(--coral); }
+
+    /* CONTENT */
+    .content { padding: 16px; }
+
+    /* FECHA DIVIDER */
+    .fecha-divider {
+      display: flex; align-items: center; gap: 10; margin-bottom: 10px; margin-top: 4px;
+    }
+    .fecha-line { flex: 1; height: 1px; background: var(--border); }
+    .fecha-label {
+      font-size: 11px; font-weight: 700; color: var(--coral);
+      text-transform: uppercase; letter-spacing: 1px;
+    }
+
+    /* CARD */
+    .card {
+      background: white; border-radius: 16px; margin-bottom: 10px;
+      overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      cursor: pointer; transition: transform 0.1s;
+    }
+    .card:active { transform: scale(0.99); }
+    .card-stripe { height: 4px; }
+    .card-body { padding: 12px 14px; }
+    .card-momento { font-size: 10px; font-weight: 800; color: #ccc; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+    .card-alimentos { font-size: 15px; font-weight: 700; color: var(--text); line-height: 1.4; margin-bottom: 6px; }
+    .card-top { display: flex; justify-content: space-between; align-items: flex-start; }
+    .card-left { flex: 1; }
+    .reaccion-badge {
+      font-size: 11px; font-weight: 700;
+      padding: 4px 10px; border-radius: 20px;
+      margin-left: 8px; white-space: nowrap; flex-shrink: 0;
+    }
+    .nuevos-row { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 6px; }
+    .badge-nuevo {
+      background: var(--green-bg); color: var(--green-text);
+      font-size: 10px; font-weight: 800;
+      padding: 2px 8px; border-radius: 20px;
+    }
+    .card-nota {
+      margin-top: 8px; background: #fff8f4; border-radius: 10px;
+      padding: 8px 12px; font-size: 13px; color: #666; line-height: 1.5;
+      border-left: 3px solid #fda085;
+    }
+    .no-nota { margin-top: 8px; font-size: 12px; color: #ccc; font-style: italic; }
+
+    /* EMPTY */
+    .empty { text-align: center; padding: 40px 20px; color: #bbb; }
+    .empty p:first-child { font-size: 40px; margin-bottom: 10px; }
+
+    /* FORM */
+    .form { display: flex; flex-direction: column; gap: 14px; }
+    .field-label {
+      display: block; font-size: 11px; font-weight: 700;
+      color: var(--muted); text-transform: uppercase;
+      letter-spacing: 0.5px; margin-bottom: 6px;
+    }
+    .field-label span { font-weight: 400; color: #ccc; }
+    input[type="date"], input[type="text"], textarea {
+      width: 100%; padding: 11px 14px; border-radius: 12px;
+      border: 1.5px solid var(--border); background: white;
+      font-size: 14px; color: var(--text); outline: none;
+      font-family: 'DM Sans', sans-serif;
+      transition: border-color 0.2s;
+    }
+    input:focus, textarea:focus { border-color: var(--coral); }
+    textarea { resize: none; line-height: 1.5; }
+
+    .momento-btns { display: flex; gap: 8px; }
+    .momento-btn {
+      flex: 1; padding: 10px; border-radius: 12px; border: none;
+      font-size: 14px; cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      transition: all 0.2s;
+    }
+    .momento-btn.active { background: var(--coral); color: white; font-weight: 700; }
+    .momento-btn:not(.active) { background: white; color: #555; }
+
+    .reacciones { display: flex; flex-wrap: wrap; gap: 8px; }
+    .reaccion-btn {
+      padding: 7px 12px; border-radius: 20px; border: none;
+      font-size: 13px; cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      transition: all 0.2s;
+    }
+
+    .btn-guardar {
+      padding: 16px; border-radius: 16px; border: none;
+      font-size: 16px; font-weight: 900; cursor: pointer;
+      font-family: 'Playfair Display', serif;
+      letter-spacing: 0.5px; color: white;
+      background: linear-gradient(135deg, #f97316, #fda085);
+      transition: all 0.3s;
+    }
+    .btn-guardar.ok { background: var(--green); }
+
+    /* GRUPO */
+    .grupo { margin-bottom: 20px; }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <span class="header-emoji">🌸</span>
+  <h1>Diario de Léah</h1>
+  <p>8 meses · Alimentación complementaria</p>
+  <div class="nuevos-chips" id="nuevos-chips"></div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="setVista('diario')">📖 Diario</button>
+  <button class="tab" onclick="setVista('nuevo')">＋ Agregar</button>
+</div>
+
+<div class="content">
+  <div id="vista-diario"></div>
+  <div id="vista-nuevo" style="display:none">
+    <div class="form">
+      <div>
+        <label class="field-label">📅 Fecha</label>
+        <input type="date" id="f-fecha" />
+      </div>
+      <div>
+        <label class="field-label">🕐 Momento</label>
+        <div class="momento-btns">
+          <button class="momento-btn active" id="btn-comida" onclick="setMomento('comida')">☀️ Comida</button>
+          <button class="momento-btn" id="btn-cena" onclick="setMomento('cena')">🌙 Cena</button>
+        </div>
+      </div>
+      <div>
+        <label class="field-label">🍽️ ¿Qué comió?</label>
+        <textarea id="f-alimentos" rows="2" placeholder="ej. Omelette con carne de cerdo molida"></textarea>
+      </div>
+      <div>
+        <label class="field-label">🆕 Alimentos nuevos <span>(separados por coma)</span></label>
+        <input type="text" id="f-nuevos" placeholder="ej. Carne de cerdo, zanahoria" />
+      </div>
+      <div>
+        <label class="field-label">💬 Reacción</label>
+        <div class="reacciones" id="reacciones-btns"></div>
+      </div>
+      <div>
+        <label class="field-label">📝 Nota <span>(opcional)</span></label>
+        <textarea id="f-nota" rows="2" placeholder="ej. Comió muy bien, terminó todo el plato"></textarea>
+      </div>
+      <button class="btn-guardar" id="btn-guardar" onclick="guardar()">Guardar registro</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const REACCIONES = [
+  { label: "😍 Le encantó", color: "#22c55e", bg: "#dcfce7" },
+  { label: "😊 Le gustó", color: "#10b981", bg: "#d1fae5" },
+  { label: "😐 Indiferente", color: "#eab308", bg: "#fef9c3" },
+  { label: "🤔 No le convenció", color: "#f97316", bg: "#ffedd5" },
+  { label: "❌ No le gustó", color: "#ef4444", bg: "#fee2e2" },
+  { label: "⚠️ Reacción", color: "#f97316", bg: "#fde8d8" },
+];
+
+const INICIAL = [
+  { id: 1, fecha: "2026-05-27", momento: "comida", alimentos: "Omelette y carne de cerdo molida", nuevos: ["Carne de cerdo"], reaccion: "😍 Le encantó", nota: "Sin reacción alérgica. Ambos alimentos bien tolerados." },
+  { id: 2, fecha: "2026-05-27", momento: "cena", alimentos: "Yogurt griego con avena y banana machacada", nuevos: [], reaccion: "😍 Le encantó", nota: "" },
+];
+
+let registros = JSON.parse(localStorage.getItem("diario-leah") || "null") || INICIAL;
+let vistaActual = "diario";
+let momentoActual = "comida";
+let reaccionActual = "😍 Le encantó";
+let expandido = null;
+
+function save() { localStorage.setItem("diario-leah", JSON.stringify(registros)); }
+
+function todayStr() { return new Date().toISOString().split("T")[0]; }
+
+function formatFecha(str) {
+  const [y, m, d] = str.split("-");
+  const meses = ["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
+  return `${parseInt(d)} ${meses[parseInt(m)-1]} ${y}`;
+}
+
+function setVista(v) {
+  vistaActual = v;
+  document.querySelectorAll(".tab").forEach((t,i) => t.classList.toggle("active", (i===0 && v==="diario") || (i===1 && v==="nuevo")));
+  document.getElementById("vista-diario").style.display = v === "diario" ? "block" : "none";
+  document.getElementById("vista-nuevo").style.display = v === "nuevo" ? "block" : "none";
+  if (v === "diario") renderDiario();
+}
+
+function setMomento(m) {
+  momentoActual = m;
+  document.getElementById("btn-comida").className = "momento-btn" + (m === "comida" ? " active" : "");
+  document.getElementById("btn-cena").className = "momento-btn" + (m === "cena" ? " active" : "");
+}
+
+function initReacciones() {
+  const cont = document.getElementById("reacciones-btns");
+  cont.innerHTML = REACCIONES.map(r => `
+    <button class="reaccion-btn" id="rbtn-${r.label.replace(/[^a-z]/gi,'')}"
+      onclick="setReaccion('${r.label}')"
+      style="background:${reaccionActual === r.label ? r.color : 'white'};color:${reaccionActual === r.label ? 'white' : '#555'}"
+    >${r.label}</button>
+  `).join("");
+}
+
+function setReaccion(r) {
+  reaccionActual = r;
+  initReacciones();
+}
+
+function renderChipsNuevos() {
+  const todos = [...new Set(registros.flatMap(r => r.nuevos))];
+  document.getElementById("nuevos-chips").innerHTML = todos.map(a => `<span class="chip-nuevo">✓ ${a}</span>`).join("");
+}
+
+function getReaccionStyle(label) {
+  const r = REACCIONES.find(x => x.label === label);
+  return r ? `background:${r.bg};color:${r.color}` : "background:#f3f4f6;color:#666";
+}
+
+function getStripe(momento) {
+  return momento === "comida"
+    ? "background:linear-gradient(90deg,#fda085,#f6d365)"
+    : "background:linear-gradient(90deg,#a18cd1,#fbc2eb)";
+}
+
+function toggleExpandido(id) {
+  expandido = expandido === id ? null : id;
+  renderDiario();
+}
+
+function renderDiario() {
+  renderChipsNuevos();
+  const cont = document.getElementById("vista-diario");
+  const porFecha = {};
+  registros.forEach(r => { if (!porFecha[r.fecha]) porFecha[r.fecha] = []; porFecha[r.fecha].push(r); });
+  const fechas = Object.keys(porFecha).sort((a,b) => b.localeCompare(a));
+
+  if (fechas.length === 0) {
+    cont.innerHTML = `<div class="empty"><p>🍼</p><p>Todavía no hay registros. ¡Agrega el primero!</p></div>`;
+    return;
+  }
+
+  cont.innerHTML = fechas.map(fecha => {
+    const items = porFecha[fecha].sort((a,b) => a.momento === "comida" ? -1 : 1);
+    return `
+      <div class="grupo">
+        <div class="fecha-divider">
+          <div class="fecha-line"></div>
+          <span class="fecha-label">${formatFecha(fecha)}</span>
+          <div class="fecha-line"></div>
+        </div>
+        ${items.map(r => `
+          <div class="card" onclick="toggleExpandido(${r.id})">
+            <div class="card-stripe" style="${getStripe(r.momento)}"></div>
+            <div class="card-body">
+              <div class="card-top">
+                <div class="card-left">
+                  <div class="card-momento">${r.momento === "comida" ? "☀️ Comida" : "🌙 Cena"}</div>
+                  <div class="card-alimentos">${r.alimentos}</div>
+                  ${r.nuevos.length > 0 ? `<div class="nuevos-row">${r.nuevos.map(n => `<span class="badge-nuevo">🆕 ${n}</span>`).join("")}</div>` : ""}
+                </div>
+                <span class="reaccion-badge" style="${getReaccionStyle(r.reaccion)}">${r.reaccion}</span>
+              </div>
+              ${expandido === r.id ? (r.nota ? `<div class="card-nota">📝 ${r.nota}</div>` : `<p class="no-nota">Sin notas adicionales</p>`) : ""}
+            </div>
+          </div>
+        `).join("")}
+      </div>
+    `;
+  }).join("");
+}
+
+function guardar() {
+  const alimentos = document.getElementById("f-alimentos").value.trim();
+  if (!alimentos) return;
+  const nuevosStr = document.getElementById("f-nuevos").value.trim();
+  const nuevos = nuevosStr ? nuevosStr.split(",").map(s => s.trim()).filter(Boolean) : [];
+  const registro = {
+    id: Date.now(),
+    fecha: document.getElementById("f-fecha").value || todayStr(),
+    momento: momentoActual,
+    alimentos,
+    nuevos,
+    reaccion: reaccionActual,
+    nota: document.getElementById("f-nota").value.trim(),
+  };
+  registros.unshift(registro);
+  save();
+
+  const btn = document.getElementById("btn-guardar");
+  btn.textContent = "✅ ¡Guardado!";
+  btn.classList.add("ok");
+
+  document.getElementById("f-alimentos").value = "";
+  document.getElementById("f-nuevos").value = "";
+  document.getElementById("f-nota").value = "";
+  document.getElementById("f-fecha").value = todayStr();
+  momentoActual = "comida";
+  reaccionActual = "😍 Le encantó";
+  setMomento("comida");
+  initReacciones();
+
+  setTimeout(() => {
+    btn.textContent = "Guardar registro";
+    btn.classList.remove("ok");
+    setVista("diario");
+  }, 1200);
+}
+
+// Init
+document.getElementById("f-fecha").value = todayStr();
+initReacciones();
+renderDiario();
+</script>
+</body>
+</html>
